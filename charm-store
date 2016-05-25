@@ -1,0 +1,23 @@
+#!/bin/bash -e
+
+COMMIT=${CHARM_STORE_COMMIT:-}
+
+for i in *.yaml; do
+    revno=$(bzr revno)
+    target=$(basename $i .yaml)
+    if [ -e build/$target ]; then
+        echo "build/$target exists, please remove before continuing (make clean)"
+        exit 1
+    fi
+    mkdir -p build
+    bzr co lp:~landscape/charms/bundles/$target/bundle build/$target
+    cp $target.yaml build/$target/bundle.yaml
+    cp README.md build/$target/README.md
+    if [ "$COMMIT" == "" ]; then
+        echo "Diff from Charm Store: $target"
+        (cd build/$target && bzr diff) || /bin/true
+    else
+        echo "Committing to Charm Store: $target"
+        (cd build/$target && bzr commit -m "$COMMIT (stable: r$revno)")
+    fi
+done

@@ -1,0 +1,58 @@
+#!/usr/bin/python3
+
+import os
+
+from jinja2 import FileSystemLoader, Environment
+
+DEFAULTS = {
+    "rabbitmq": {},
+    "postgresql": {
+        "max_connections": 500,
+        "max_prepared_transactions": 500,
+        "memory": 2048},
+    "haproxy": {},
+    "landscape": {
+        "memory": 2048,
+        "source": "deb http://ppa.launchpad.net/landscape/16.03/ubuntu trusty main",
+        "key": "4652B4E6"}
+}
+
+FLAVORS = [
+    # scalable
+    {"name": "scalable"},
+
+    # dense
+    {"name": "dense",
+     "rabbitmq": {
+         "to": "lxc:0"},
+     "postgresql": {
+         "to": "lxc:0"},
+     "haproxy": {
+         "to": "0"},
+     "landscape": {
+         "to": "lxc:0"}},
+
+    # dense-maas
+    {"name": "dense-maas",
+     "rabbitmq": {
+         "to": "lxc:0"},
+     "postgresql": {
+         "to": "lxc:0"},
+     "haproxy": {
+         "to": "lxc:0"},
+     "landscape": {
+         "to": "lxc:0"}},
+]
+
+if __name__ == "__main__":
+    environment = Environment(
+        loader=FileSystemLoader("."), trim_blocks=True, lstrip_blocks=True,
+        keep_trailing_newline=True)
+    template = environment.get_template("landscape-template.jinja2")
+    for flavor in FLAVORS:
+        with open("landscape-%s.yaml" % flavor["name"], "w") as fd:
+            context = DEFAULTS.copy()
+            context["name"] = flavor["name"]
+            for key in DEFAULTS.keys():
+                context[key].update(flavor.get(key, {}))
+            fd.write(template.render(context))

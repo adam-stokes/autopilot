@@ -1,0 +1,105 @@
+series: trusty
+services:
+    rabbitmq-server:
+        charm: cs:trusty/rabbitmq-server-44
+        {% if rabbitmq["to"] %}
+        to:
+            - {{ rabbitmq["to"] }}
+        {% endif %}
+        num_units: 1
+        annotations:
+            "gui-x": "600"
+            "gui-y": "370"
+    postgresql:
+        charm: cs:trusty/postgresql-41
+        {% if postgresql["memory"] %}
+        constraints: mem={{ postgresql["memory"] }}
+        {% endif %}
+        {% if postgresql["to"] %}
+        to:
+            - {{ postgresql["to"] }}
+        {% endif %}
+        num_units: 1
+        options:
+            extra_packages: python-apt postgresql-contrib postgresql-.*-debversion postgresql-plpython-.*
+            max_connections: {{ postgresql.max_connections }}
+            max_prepared_transactions: {{ postgresql.max_connections }}
+            {% if postgresql.manual_tuning %}
+            performance_tuning: manual
+            {% endif %}
+            {% if postgresql.shared_buffers %}
+            shared_buffers: {{ postgresql.shared_buffers }}
+            {% endif %}
+            {% if postgresql.checkpoint_segments %}
+            checkpoint_segments: {{ postgresql.checkpoint_segments }}
+            {% endif %}
+            {% if postgresql.maintenance_work_mem %}
+            maintenance_work_mem: {{ postgresql.maintenance_work_mem }}
+            {% endif %}
+            {% if postgresql.work_mem %}
+            work_mem: {{ postgresql.work_mem }}
+            {% endif %}
+            {% if postgresql.effective_cache_size %}
+            effective_cache_size: {{ postgresql.effective_cache_size }}
+            {% endif %}
+        annotations:
+            "gui-x": "600"
+            "gui-y": "120"
+    haproxy:
+        charm: cs:trusty/haproxy-19
+        {% if haproxy["to"] %}
+        to:
+            - {{ haproxy["to"] }}
+        {% endif %}
+        expose: True
+        num_units: 1
+        options:
+            enable_monitoring: True
+            monitoring_allowed_cidr: "0.0.0.0/0"
+            monitoring_password: "haproxy"
+            default_timeouts: "queue 60000, connect 5000, client 120000, server 120000"
+            # Don't deploy default haproxy service on port 80
+            services: ""
+            source: backports
+            ssl_cert: SELFSIGNED
+        annotations:
+            "gui-x": "1200"
+            "gui-y": "120"
+    landscape-server:
+        {% if landscape["branch"] %}
+        branch: {{ landscape["branch"] }}
+        {% else %}
+        charm: cs:trusty/landscape-server
+        {% endif %}
+        {% if landscape["memory"] %}
+        constraints: mem={{ landscape["memory"] }}
+        {% endif %}
+        {% if landscape["to"] %}
+        to:
+            - {{ landscape["to"] }}
+        {% endif %}
+        num_units: 1
+        options:
+            source: {{ landscape["source"] }}
+            key: {{ landscape["key"] }}
+            {% if landscape["ssl-cert"] %}
+            ssl-cert: {{ landscape["ssl-cert"] }}
+            ssl-key: {{ landscape["ssl-key"] }}
+            {% endif %}
+        annotations:
+            "gui-x": "950"
+            "gui-y": "120"
+{% if landscape["to"] %}
+machines:
+    "0": {}
+{% endif %}
+relations:
+    - [landscape-server, rabbitmq-server]
+    - [landscape-server, haproxy]
+    - ["landscape-server:db", "postgresql:db-admin"]
+tags:
+    - conjure-openstack
+    - autopilot
+    - landscape
+description: |
+    The Canonical Distribution - Enterprise OpenStack Install and Management.
