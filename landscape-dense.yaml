@@ -2,8 +2,6 @@ series: trusty
 services:
     rabbitmq-server:
         charm: cs:trusty/rabbitmq-server-45
-        to:
-            - lxc:0
         num_units: 1
         annotations:
             "gui-x": "600"
@@ -11,8 +9,6 @@ services:
     postgresql:
         charm: cs:trusty/postgresql-42
         constraints: mem=2048
-        to:
-            - lxc:0
         num_units: 1
         options:
             extra_packages: python-apt postgresql-contrib postgresql-.*-debversion postgresql-plpython-.*
@@ -23,8 +19,6 @@ services:
             "gui-y": "120"
     haproxy:
         charm: cs:trusty/haproxy-19
-        to:
-            - 0
         expose: True
         num_units: 1
         options:
@@ -42,8 +36,6 @@ services:
     landscape-server:
         charm: cs:trusty/landscape-server
         constraints: mem=2048
-        to:
-            - lxc:0
         num_units: 1
         options:
             source: deb http://ppa.launchpad.net/landscape/16.03/ubuntu trusty main
@@ -51,8 +43,6 @@ services:
         annotations:
             "gui-x": "950"
             "gui-y": "120"
-machines:
-    "0": {}
 relations:
     - [landscape-server, rabbitmq-server]
     - [landscape-server, haproxy]
