@@ -1,13 +1,13 @@
 series: trusty
 services:
     rabbitmq-server:
-        charm: cs:trusty/rabbitmq-server-44
+        charm: cs:trusty/rabbitmq-server-45
         num_units: 1
         annotations:
             "gui-x": "600"
             "gui-y": "370"
     postgresql:
-        charm: cs:trusty/postgresql-41
+        charm: cs:trusty/postgresql-42
         constraints: mem=2048
         num_units: 1
         options:

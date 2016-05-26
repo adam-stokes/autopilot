@@ -9,7 +9,7 @@ clean:
 
 render:
 	@./render-bundles
-	
+
 update-charm-revisions:
 	@./update-charm-revisions \
 		$(EXTRA_UPDATE_ARGUMENTS) \
