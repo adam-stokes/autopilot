@@ -160,10 +160,9 @@ def wait_for_landscape(host):
 
 
 def register_new_user(host, **kwargs):
-    """ Register a new user. Takes kwargs admin_email admin_name, and
-    system_email. """
+    """ Register a new user. Takes kwargs admin_email, admin_password,
+    admin_name, and system_email. """
     kwargs['root_url'] = 'https://%s/' % host
-    kwargs['admin_password'] = "ubuntu123"
 
     res = run_query('anonymous',
                     'anonymous',
@@ -187,6 +186,7 @@ def main():
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--admin-email", help="the admin (login) e-mail")
+    parser.add_argument('--admin-password', help='the admin password')
     parser.add_argument("--admin-name", help="administrator's full name")
     parser.add_argument("--system-email", help="landscape's email address")
     parser.add_argument("--maas-host", help="the host of the MAAS instance")
@@ -198,6 +198,7 @@ def main():
     host = get_landscape_host()
     wait_for_landscape(host)
     auth = register_new_user(host, admin_email=args.admin_email,
+                             admin_password=args.admin_password,
                              admin_name=args.admin_name,
                              system_email=args.system_email)
 

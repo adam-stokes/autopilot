@@ -1,4 +1,4 @@
 {
     "friendly-name": "OpenStack Autopilot",
-    "cloud-whitelist": ["maas", "localhost"]
+    "cloud-whitelist": ["maas"]
 }
