@@ -11,6 +11,15 @@ if [ $(unitStatus landscape-server 0) = "error" ]; then
     exposeResult "There is an error with landscape-server, please check juju status." 1 "false"
 fi
 
+if [ $(unitStatus landscape-server 0) != "active" ]; then
+    exposeResult "Landscape Server not quite ready yet" 0 "false"
+fi
+
+if [ $(unitStatus haproxy 0) != "active" ]; then
+    exposeResult "HAProxy not quite ready yet" 0 "false"
+fi
+
+# landscape should be available so we register our client
 $landscape_exec --admin-email "root@example.com" --admin-password "ubuntu123" --admin-name "administrator" --system-email "root@example.com" --maas-host "$MAAS_SERVER" --maas-apikey "$MAAS_OAUTH"
 RET=$?
 
