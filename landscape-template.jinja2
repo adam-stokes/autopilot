@@ -1,13 +1,13 @@
 series: trusty
 services:
     rabbitmq-server:
-        charm: cs:trusty/rabbitmq-server-45
+        charm: cs:trusty/rabbitmq-server-46
         num_units: 1
         annotations:
             "gui-x": "600"
             "gui-y": "370"
     postgresql:
-        charm: cs:trusty/postgresql-42
+        charm: cs:trusty/postgresql-101
         {% if postgresql["memory"] %}
         constraints: mem={{ postgresql["memory"] }}
         {% endif %}

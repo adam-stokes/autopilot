@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Title: Registering against Landscape
-# Description: Registring an admin user to login with
+# Description: Registering an admin user to login with
 
 . /usr/share/conjure-up/hooklib/common.sh
 
